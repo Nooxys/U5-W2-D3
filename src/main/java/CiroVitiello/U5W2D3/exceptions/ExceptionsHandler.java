@@ -18,13 +18,13 @@ public class ExceptionsHandler {
     }
 
     @ExceptionHandler(NoFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorsPayload handleNoFoundException(NoFoundException ex) {
         return new ErrorsPayload(ex.getMessage(), LocalDateTime.now());
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorsPayload handleBadRequest(Exception ex) {
         ex.printStackTrace();
         return new ErrorsPayload("Internal error! Please wait until it's fixed!", LocalDateTime.now());
