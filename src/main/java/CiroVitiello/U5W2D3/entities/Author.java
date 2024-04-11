@@ -21,7 +21,7 @@ public class Author {
     private String surname;
     private String email;
     private LocalDate birthDate;
-    @Setter(AccessLevel.NONE)
+    //    @Setter(AccessLevel.NONE)
     private String avatar;
 
 //    @OneToMany(mappedBy = "author")
@@ -32,10 +32,10 @@ public class Author {
         this.surname = surname;
         this.email = email;
         this.birthDate = birthDate;
-        setAvatar();
+        setAvatar2();
     }
 
-    public void setAvatar() {
+    public void setAvatar2() {
         this.avatar = "https://ui-avatars.com/api/?name=" + this.name + "+" + this.surname;
     }
 }

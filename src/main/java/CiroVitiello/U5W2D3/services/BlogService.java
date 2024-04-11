@@ -1,10 +1,9 @@
 package CiroVitiello.U5W2D3.services;
 
-
 import CiroVitiello.U5W2D3.entities.Blog;
 import CiroVitiello.U5W2D3.exceptions.BadRequestException;
 import CiroVitiello.U5W2D3.exceptions.NoFoundException;
-import CiroVitiello.U5W2D3.payloads.NewBlogPayload;
+import CiroVitiello.U5W2D3.payloads.NewBlogDTO;
 import CiroVitiello.U5W2D3.repositories.BlogDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +18,7 @@ public class BlogService {
     @Autowired
     private BlogDAO blogDAO;
 
+
     @Autowired
     private AuthorService authorService;
 
@@ -29,14 +29,14 @@ public class BlogService {
         return this.blogDAO.findAll(pageable);
     }
 
-    public Blog saveBlog(NewBlogPayload body) {
-        this.blogDAO.findByName(body.getName()).ifPresent(
+    public Blog saveBlog(NewBlogDTO body) {
+        this.blogDAO.findByName(body.name()).ifPresent(
                 blog -> {
                     throw new BadRequestException("blog " + blog.getName() + " already exist!");
                 }
         );
 
-        return this.blogDAO.save(new Blog(body.getCategory(), body.getCover(), body.getName(), body.getContent(), body.getMinutesOfLecture(), authorService.findById(body.getAuthorId())));
+        return this.blogDAO.save(new Blog(body.category(), body.cover(), body.name(), body.content(), body.minutesOfLecture(), authorService.findById(body.authorId())));
     }
 
     public Blog findById(long id) {
@@ -44,14 +44,15 @@ public class BlogService {
         return this.blogDAO.findById(id).orElseThrow(() -> new NoFoundException(id));
     }
 
-    public Blog findByIdAndUpdate(long id, Blog updatedBlog) {
+    public Blog findByIdAndUpdate(long id, NewBlogDTO updatedBlog) {
         Blog found = findById(id);
 
-        found.setName(updatedBlog.getName());
-        found.setCategory(updatedBlog.getCategory());
-        found.setCover(updatedBlog.getCover());
-        found.setContent(updatedBlog.getContent());
-        found.setMinutesOfLecture(updatedBlog.getMinutesOfLecture());
+        found.setName(updatedBlog.name());
+        found.setCategory(updatedBlog.category());
+        found.setCover(updatedBlog.cover());
+        found.setContent(updatedBlog.content());
+        found.setMinutesOfLecture(updatedBlog.minutesOfLecture());
+        found.setAuthor(authorService.findById(updatedBlog.authorId()));
         return this.blogDAO.save(found);
 
     }
@@ -60,4 +61,6 @@ public class BlogService {
         Blog found = this.findById(id);
         blogDAO.delete(found);
     }
+
+
 }

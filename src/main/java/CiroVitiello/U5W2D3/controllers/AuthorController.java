@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/authors")
@@ -42,5 +45,10 @@ public class AuthorController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     private void findAuthorByIdAndDelete(@PathVariable int authorId) {
         authorService.findByIdAndDelete(authorId);
+    }
+
+    @PostMapping("/upload/{authorId}")
+    public String uploadAvatar(@RequestParam("avatar") MultipartFile image, @PathVariable long authorId) throws IOException {
+        return this.authorService.uploadImage(image, authorId);
     }
 }

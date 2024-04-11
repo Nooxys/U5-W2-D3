@@ -1,11 +1,14 @@
 package CiroVitiello.U5W2D3.controllers;
 
 import CiroVitiello.U5W2D3.entities.Blog;
-import CiroVitiello.U5W2D3.payloads.NewBlogPayload;
+import CiroVitiello.U5W2D3.exceptions.BadRequestException;
+import CiroVitiello.U5W2D3.payloads.NewBlogDTO;
 import CiroVitiello.U5W2D3.services.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,8 +27,12 @@ public class BlogController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    private Blog SaveBlog(@RequestBody NewBlogPayload body) {
-        return this.blogService.saveBlog(body);
+    private Blog SaveBlog(@RequestBody @Validated NewBlogDTO body, BindingResult validation) {
+        if (validation.hasErrors()) {
+            throw new BadRequestException(validation.getAllErrors());
+        } else {
+            return this.blogService.saveBlog(body);
+        }
     }
 
     @GetMapping("/{blogId}")
@@ -34,7 +41,7 @@ public class BlogController {
     }
 
     @PutMapping("/{blogId}")
-    private Blog findBlogByIdAndUpdate(@PathVariable int blogId, @RequestBody Blog body) {
+    private Blog findBlogByIdAndUpdate(@PathVariable int blogId, @RequestBody NewBlogDTO body) {
         return this.blogService.findByIdAndUpdate(blogId, body);
     }
 
@@ -43,5 +50,6 @@ public class BlogController {
     private void findBlogByIdAndDelete(@PathVariable int blogId) {
         this.blogService.findByIdAndDelete(blogId);
     }
+
 
 }
